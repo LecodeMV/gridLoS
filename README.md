@@ -7,16 +7,16 @@ See demo.
 ## Installation
 
 With npm:
-
-    npm install gridLoS
+    npm i gridlos
   
 In the browser:
-
+```javascript
     <script src="gridLoS.js"></script>
+```
 The variable `gridLoS` will be exposed. 
 
 ## Usage
-
+```javascript
     let gridLoS = require('gridLoS');
 
     let userCell = {x: 0, y: 0};
@@ -29,22 +29,22 @@ The variable `gridLoS` will be exposed.
         {x: 2, y: 1},
     ];
     gridLoS.make(cells, userCell, 2);
-
+```
 `gridLoS.make` process the given cells and alter the property `visible`, marking if their are targetable or not.
 
 ### Settings
 
 There are some settings you can alter before computing the cells.
-
+```javascript
     gridLoS.settings({
         cellObstacleProp: "block",
         cellVisibleProp: "visible",
         cellWidth: 32,
         cellHeight: 32
     });
-
+```
 ### From Maps
-
+```javascript
     let map = [
         [0,1,0],
         [0,0,0],
@@ -53,7 +53,7 @@ There are some settings you can alter before computing the cells.
     let userCell = {x: 0, y: 0};
     let cells = gridLoS.mapToCells(map);
     gridLoS.make(cells, userCell, 2);
-
+```
 ### Functions
 
 * `settings({})`  
