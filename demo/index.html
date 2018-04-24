@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="gridLoS.js"></script>
+    <script src="main.js"></script>
+    <title>DoLineSight</title>
+</head>
+
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .flex {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .options {
+        margin-left: 1em;
+    }
+
+    .cell {
+        width: 28px;
+        height: 28px;
+        border: 1px solid #424242;
+        display: inline-block;
+    }
+
+    .obstacle {
+        background-color: #000000;
+    }
+
+    .noVisible {
+        background-color: #848484;
+    }
+
+    .intersects {
+        background-color: #A4A4A4;
+    }
+
+    .int-visible {
+        background-color: #F2F2F2;
+    }
+</style>
+
+<body>
+    <div class="flex">
+        <canvas id="canvas" width="680" height="580" style="border: 1px solid black;"></canvas>
+        <div class="options">
+            <div>
+                <b>Line of Sight builder for a targeting system</b>
+                <hr>
+                Show polygons ?
+                <input id="check" type="checkbox">
+                <div><div class="cell obstacle"></div> Obstacle</div>
+                <div><div class="cell noVisible"></div> Non visible</div>
+                <div><div class="cell intersects"></div> Intersects with a polygon but non targetable by the player.</div>
+                <div><div class="cell int-visible"></div> Intersects with a polygon but targetable by the player.</div>
+                <br>
+                <p>
+                    A cell is considered fully visible (<b>targetable</b>) when we can form a line from the player to
+                    a cell's <b>center</b> without bumping into an obstacle.
+                </p>
+                <p>
+                    You can use directional arrows to move the player.
+                </p>
+                <p>
+                    <b>Algorithm</b>
+                    <br>
+                    1- Make a polygon for each obstacle, based on the corners.
+                    <br>
+                    2- Detect and store all cells that intersects with the polygons' lines.
+                       Those may or may not be visible.
+                       <br>
+                    3- Detect all cells fully inside the polygons.
+                       Those are absolutely non visible.
+                       <br>
+                    4- For each cells gathered from step 2, check if the user can reach their center
+                       without bumping into an obstacle.
+                       If so, the cell is targetable.
+                       <br>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

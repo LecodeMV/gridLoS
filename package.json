@@ -1,0 +1,22 @@
+{
+  "name": "gridlos",
+  "version": "1.0.0",
+  "description": "Line of Sight builder for targeting systems",
+  "main": "gridLoS.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LecodeMV/gridLoS.git"
+  },
+  "author": "LecodeMV",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LecodeMV/gridLoS/issues"
+  },
+  "homepage": "https://github.com/LecodeMV/gridLoS#readme",
+  "keywords": [
+    "grid","line of sight","field of view","fov","game"
+  ]
+}
