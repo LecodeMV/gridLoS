@@ -1,6 +1,8 @@
 window.onload = function () {
     let cellW = 28, cellH = 28;
     gridLoS.settings({
+        async: true,
+        asyncDelay: 0,
         cellVisibleProp: "isVisible",
         cellObstacleProp: "isObstacle",
         cellWidth: cellW,
@@ -34,9 +36,11 @@ window.onload = function () {
     let user = { x: 10, y: 10 };
     let showPolygons = false;
 
-    function draw() {
+    async function draw() {
         let cells = gridLoS.mapToCells(map);
-        let result = gridLoS.make(cells, user, 20);
+        console.time("make");
+        let result = await gridLoS.make(cells, user, 20);
+        console.timeEnd("make");
         let polylines = result.polylines;
         let intersectingCells = result.intersectingCells;
         let cellsInShadow = result.cellsInShadow;
@@ -98,7 +102,7 @@ window.onload = function () {
         draw();
     };
 
-    document.getElementById("check").addEventListener("change",() => {
+    document.getElementById("check").addEventListener("change", () => {
         showPolygons = !showPolygons;
         draw();
     });

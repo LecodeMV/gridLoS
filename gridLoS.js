@@ -1,10 +1,10 @@
-let gridLoS = (function () {
-
-    let settings = (options) => {
-        this.cellObstacleProp = options.cellObstacleProp;
-        this.cellVisibleProp = options.cellVisibleProp;
-        this.cellWidth = options.cellWidth;
-        this.cellHeight = options.cellHeight;
+let gridLoS = (function() {
+    let params = {};
+    let settings = options => {
+        params.cellObstacleProp = options.cellObstacleProp;
+        params.cellVisibleProp = options.cellVisibleProp;
+        params.cellWidth = options.cellWidth;
+        params.cellHeight = options.cellHeight;
     };
     settings({
         cellObstacleProp: "block",
@@ -13,13 +13,12 @@ let gridLoS = (function () {
         cellHeight: 32
     });
 
-
     function getCellRect(cell, pad = 0) {
         return {
-            left: cell.x * this.cellWidth + pad,
-            top: cell.y * this.cellHeight + pad,
-            right: cell.x * this.cellWidth + this.cellWidth - pad,
-            bottom: cell.y * this.cellHeight + this.cellHeight - pad
+            left: cell.x * params.cellWidth + pad,
+            top: cell.y * params.cellHeight + pad,
+            right: cell.x * params.cellWidth + params.cellWidth - pad,
+            bottom: cell.y * params.cellHeight + params.cellHeight - pad
         };
     }
 
@@ -47,14 +46,22 @@ let gridLoS = (function () {
 
     function getFacingCorners(cell, userCell) {
         let corners = getCellCorners(cell);
-        if (cell.x == userCell.x && cell.y < userCell.y) return [corners.leftBottom, corners.rightBottom];
-        if (cell.x == userCell.x && cell.y > userCell.y) return [corners.leftTop, corners.rightTop];
-        if (cell.y == userCell.y && cell.x < userCell.x) return [corners.rightTop, corners.rightBottom];
-        if (cell.y == userCell.y && cell.x > userCell.x) return [corners.leftBottom, corners.leftTop];
-        if (cell.x < userCell.x && cell.y < userCell.y) return [corners.rightTop, corners.leftBottom];
-        if (cell.x > userCell.x && cell.y < userCell.y) return [corners.leftTop, corners.rightBottom];
-        if (cell.x < userCell.x && cell.y > userCell.y) return [corners.leftTop, corners.rightBottom];
-        if (cell.x > userCell.x && cell.y > userCell.y) return [corners.leftBottom, corners.rightTop];
+        if (cell.x == userCell.x && cell.y < userCell.y)
+            return [corners.leftBottom, corners.rightBottom];
+        if (cell.x == userCell.x && cell.y > userCell.y)
+            return [corners.leftTop, corners.rightTop];
+        if (cell.y == userCell.y && cell.x < userCell.x)
+            return [corners.rightTop, corners.rightBottom];
+        if (cell.y == userCell.y && cell.x > userCell.x)
+            return [corners.leftBottom, corners.leftTop];
+        if (cell.x < userCell.x && cell.y < userCell.y)
+            return [corners.rightTop, corners.leftBottom];
+        if (cell.x > userCell.x && cell.y < userCell.y)
+            return [corners.leftTop, corners.rightBottom];
+        if (cell.x < userCell.x && cell.y > userCell.y)
+            return [corners.leftTop, corners.rightBottom];
+        if (cell.x > userCell.x && cell.y > userCell.y)
+            return [corners.leftBottom, corners.rightTop];
         return [];
     }
 
@@ -62,9 +69,11 @@ let gridLoS = (function () {
         let a = { x: start[0] || start.x, y: start[1] || start.y };
         let b = { x: end[0] || end.x, y: end[1] || end.y };
         let c = {};
-        let lengthAB = Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-        c.x = b.x + (b.x - a.x) / lengthAB * dist;
-        c.y = b.y + (b.y - a.y) / lengthAB * dist;
+        let lengthAB = Math.sqrt(
+            (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)
+        );
+        c.x = b.x + ((b.x - a.x) / lengthAB) * dist;
+        c.y = b.y + ((b.y - a.y) / lengthAB) * dist;
         return [c.x, c.y];
     }
 
@@ -84,7 +93,7 @@ let gridLoS = (function () {
         } else {
             lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
             gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
-            return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
+            return 0 < lambda && lambda < 1 && (0 < gamma && gamma < 1);
         }
     }
 
@@ -123,15 +132,19 @@ let gridLoS = (function () {
         return vertexes;
     }
 
-    function isPointInPolygone(point, vs) {
-        var x = point[0], y = point[1];
+    function isPointInPolygon(point, vs) {
+        var x = point[0],
+            y = point[1];
 
         var inside = false;
         for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-            var xi = vs[i][0], yi = vs[i][1];
-            var xj = vs[j][0], yj = vs[j][1];
+            var xi = vs[i][0],
+                yi = vs[i][1];
+            var xj = vs[j][0],
+                yj = vs[j][1];
 
-            var intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            var intersect =
+                yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
             if (intersect) inside = !inside;
         }
 
@@ -142,14 +155,13 @@ let gridLoS = (function () {
         let i = small.length;
         while (i--) {
             let vertex = small[i];
-            let test = isPointInPolygone(vertex, big);
+            let test = isPointInPolygon(vertex, big);
             if (!test) return false;
         }
         return true;
     }
 
-
-    let mapToCells = (map) => {
+    let mapToCells = map => {
         let arr = [];
         const mapW = map[0].length;
         const mapH = map.length;
@@ -157,9 +169,9 @@ let gridLoS = (function () {
             for (let j = 0; j < mapH; j++) {
                 let cell = {
                     x: i,
-                    y: j,
+                    y: j
                 };
-                cell[this.cellObstacleProp] = map[j][i] === 1;
+                cell[params.cellObstacleProp] = map[j][i] === 1;
                 arr.push(cell);
             }
         }
@@ -168,25 +180,20 @@ let gridLoS = (function () {
 
     let make = (cells, userCell, range) => {
         let polylines = [];
-        let obstacles = cells.filter(c => !!c[this.cellObstacleProp]);
-        let ux = userCell.x * this.cellWidth + this.cellWidth / 2;
-        let uy = userCell.y * this.cellHeight + this.cellHeight / 2;
-        let d = this.cellWidth * range;
+        let obstacles = cells.filter(c => !!c[params.cellObstacleProp]);
+        let ux = userCell.x * params.cellWidth + params.cellWidth / 2;
+        let uy = userCell.y * params.cellHeight + params.cellHeight / 2;
+        let d = params.cellWidth * range;
 
-        let i = obstacles.length;
-        while (i--) {
-            let obstacle = obstacles[i];
+        for (const obstacle of obstacles) {
             if (obstacle.x == userCell.x && obstacle.y == userCell.y) continue;
             let corners = getFacingCorners(obstacle, userCell);
-            let c1 = corners[0], c2 = corners[1];
+            let c1 = corners[0],
+                c2 = corners[1];
             let poly = [
                 [[c1.x, c1.y], extendLine([ux, uy], [c1.x, c1.y], d)],
                 [[c2.x, c2.y], extendLine([ux, uy], [c2.x, c2.y], d)],
-                [extendLine([ux, uy], [c1.x, c1.y], d),
-                extendLine([ux, uy], [c2.x, c2.y], d)],
-
-                [[ux, uy], [c2.x, c2.y]],
-                [[ux, uy], [c1.x, c1.y]]
+                [[c1.x, c1.y],[c2.x, c2.y]]
             ];
             poly.obstacle = obstacle;
             polylines.push(poly);
@@ -195,32 +202,19 @@ let gridLoS = (function () {
         let intersectingCells = [];
         let cellsInShadow = [];
 
-        i = cells.length;
-        while (i--) {
-            let cell = cells[i];
-            cell[this.cellVisibleProp] = true;
-            let c = getCellCorners(cell, 1);
-            let poly = [
-                [c.leftTop, c.rightTop],
-                [c.leftTop, c.leftBottom],
-                [c.rightTop, c.rightBottom],
-                [c.leftBottom, c.rightBottom]
-            ];
-            let j = polylines.length;
-            while (j--) {
-                let hardPoly = poly.concat([[c.leftTop, c.rightBottom]]).concat([[c.leftBottom, c.rightTop]]);
-                if (polylinesIntersects(hardPoly, polylines[j])) {
-                    intersectingCells.push(cell);
-                }
+        for (const cell of cells) {
+            cell[params.cellVisibleProp] = true;
+            for (const polyline of polylines) {
                 let r = getCellRect(cell, 1);
-                let obstacle = polylines[j].obstacle;
-                if (obstacle.x == cell.x && obstacle.y == cell.y) continue;
+                let obstacle = polyline.obstacle;
+                //if (obstacle.x == cell.x && obstacle.y == cell.y) continue;
                 let corners = getFacingCorners(obstacle, userCell);
-                let c1 = corners[0], c2 = corners[1];
+                let c1 = corners[0],
+                    c2 = corners[1];
                 let polygonA = [
                     [ux, uy],
                     extendLine([ux, uy], [c1.x, c1.y], d),
-                    extendLine([ux, uy], [c2.x, c2.y], d),
+                    extendLine([ux, uy], [c2.x, c2.y], d)
                 ];
                 let polygonB = [
                     [r.left, r.top],
@@ -228,23 +222,33 @@ let gridLoS = (function () {
                     [r.left, r.bottom],
                     [r.right, r.bottom]
                 ];
-                let test = isPolygonInPolygon(polygonA, polygonB);
-                if (test) {
+                if (isPolygonInPolygon(polygonA, polygonB)) {
                     cellsInShadow.push(cell);
-                    cell[this.cellVisibleProp] = false;
-                    j = 0;
+                    cell[params.cellVisibleProp] = false;
+                    break;
+                }
+                let c = getCellCorners(cell, 1);
+                let poly = [
+                    [c.leftTop, c.rightTop],
+                    [c.leftTop, c.leftBottom],
+                    [c.rightTop, c.rightBottom],
+                    [c.leftBottom, c.rightBottom]
+                ];
+                let hardPoly = poly
+                    .concat([[c.leftTop, c.rightBottom]])
+                    .concat([[c.leftBottom, c.rightTop]]);
+                if (!cell.__$intersects && polylinesIntersects(hardPoly, polyline)) {
+                    intersectingCells.push(cell);
+                    cell.__$intersects = true;
                 }
             }
         }
 
-        i = intersectingCells.length;
-        while (i--) {
-            let cell = intersectingCells[i];
-            if (!cell[this.cellVisibleProp]) continue;
-            j = obstacles.length;
-            while (j--) {
-                let obstacle = obstacles[j];
-                if (obstacle.x == userCell.x && obstacle.y == userCell.y) continue;
+        for (const cell of intersectingCells) {
+            if (!cell[params.cellVisibleProp]) continue;
+            for (const obstacle of obstacles) {
+                if (obstacle.x == userCell.x && obstacle.y == userCell.y)
+                    continue;
                 if (obstacle.x == cell.x && obstacle.y == cell.y) continue;
                 let c = getCellCorners(obstacle);
                 let obstaclePoly = [
@@ -253,31 +257,37 @@ let gridLoS = (function () {
                     [c.rightTop, c.rightBottom],
                     [c.leftBottom, c.rightBottom]
                 ];
-                let center = [cell.x * this.cellWidth + this.cellWidth / 2, cell.y * this.cellHeight + this.cellHeight / 2];
+                let center = [
+                    cell.x * params.cellWidth + params.cellWidth / 2,
+                    cell.y * params.cellHeight + params.cellHeight / 2
+                ];
 
-                cell[this.cellVisibleProp] = true;
+                cell[params.cellVisibleProp] = true;
                 let line = [[ux, uy], center];
                 let poly = [line];
                 let test = polylinesIntersects(poly, obstaclePoly);
                 if (test) {
-                    cell[this.cellVisibleProp] = false;
-                    j = 0;
+                    cell[params.cellVisibleProp] = false;
+                    break;
                 }
             }
         }
 
         return {
-            intersectingCells, cellsInShadow, polylines, cells
+            intersectingCells,
+            cellsInShadow,
+            polylines,
+            cells
         };
     };
 
     return {
-        settings, mapToCells, make
+        settings,
+        mapToCells,
+        make
     };
-
 })();
 
-if (typeof module !== 'undefined' && typeof module.exports !== 'undefined')
+if (typeof module !== "undefined" && typeof module.exports !== "undefined")
     module.exports = gridLoS;
-else
-    window.gridLoS = gridLoS;
+else window.gridLoS = gridLoS;
